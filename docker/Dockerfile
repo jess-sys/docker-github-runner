@@ -5,6 +5,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG GIT_VERSION="2.26.2"
 ARG GH_RUNNER_VERSION
 ARG DOCKER_COMPOSE_VERSION="1.27.4"
+ARG LC_ALL="C"
 
 ENV RUNNER_NAME=""
 ENV RUNNER_WORK_DIRECTORY="_work"
@@ -14,6 +15,7 @@ ENV RUNNER_LABELS=""
 ENV RUNNER_ALLOW_RUNASROOT=true
 ENV GITHUB_ACCESS_TOKEN=""
 ENV AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
+ENV LC_ALL="C"
 
 # Labels.
 LABEL maintainer="me@tcardonne.fr" \
@@ -42,6 +44,9 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
         zlib1g-dev \
         gettext \
         liblttng-ust0 \
+        python3 \
+        python3-pip \
+        libpython3-dev \
         libcurl4-openssl-dev \
         openssh-client && \
     rm -rf /var/lib/apt/lists/* && \
@@ -83,6 +88,7 @@ RUN GH_RUNNER_VERSION=${GH_RUNNER_VERSION:-$(curl --silent "https://api.github.c
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean
 
+RUN export LC_ALL=C
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
